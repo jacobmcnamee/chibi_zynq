@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -std=gnu11
 endif
 
 # C specific options here (added to USE_OPT).
@@ -114,10 +114,9 @@ CHIBIOS = ../ChibiOS
 # Startup files.
 include $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/mk/startup_zynq7000.mk
 # HAL-OSAL files (optional).
-#include $(CHIBIOS)/os/hal/hal.mk
-#include $(CHIBIOS)/os/hal/ports/LPC/LPC214x/platform.mk
-#include $(CHIBIOS)/os/hal/boards/OLIMEX_LPC_P2148/board.mk
-#include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/ports/Zynq7000/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/ARM/compilers/GCC/mk/port_generic.mk
@@ -137,7 +136,8 @@ CSRC = $(STARTUPSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
-       main.c
+       main.c \
+       board.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

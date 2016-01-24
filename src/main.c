@@ -15,6 +15,7 @@
 */
 
 #include "ch.h"
+#include "hal.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except sleeping.
@@ -41,6 +42,7 @@ int main(void) {
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
    */
+  halInit();
   chSysInit();
 
   /*
