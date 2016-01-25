@@ -494,6 +494,12 @@
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
 
+/**
+ * @brief   WFI configuration
+ */
+#define ARM_ENABLE_WFI_IDLE     TRUE
+#define ARM_WFI_IMPL            asm volatile ("wfi")
+
 #endif  /* _CHCONF_H_ */
 
 /** @} */
