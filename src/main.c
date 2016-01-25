@@ -17,10 +17,28 @@
 #include "ch.h"
 #include "hal.h"
 
+#include <stdio.h>
+
+int _write(int file, char *ptr, int len) __attribute__((used));
+
+int _write(int file, char *ptr, int len)
+{
+  (void)file;
+
+  int i = 0;
+  while(i < len) {
+    /* Wait for UART1 FIFO not full */
+    while(*(volatile unsigned int *)(0xE0001000 + 0x002C) & 0x00000010U);
+    /* Write to UART1 TX FIFO */
+    *(volatile unsigned int *)(0xE0001000 + 0x0030) = ptr[i++];
+  }
+  return 0;
+}
+
 /*
  * This is a periodic thread that does absolutely nothing except sleeping.
  */
-static THD_WORKING_AREA(waThread1, 128);
+static THD_WORKING_AREA(waThread1, 2048);
 static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
@@ -28,6 +46,7 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("sleeper");
 
   while (true) {
+    printf("Hello sleeper\r\n");
     chThdSleepMilliseconds(1000);
   }
 }
@@ -36,6 +55,8 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+
+  printf("Hello ChibiOS\r\n");
 
   /*
    * System initializations.
@@ -54,6 +75,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it just sleeps.
    */
   while (true) {
+    printf("Hello main\r\n");
     chThdSleepMilliseconds(1000);
   }
 }

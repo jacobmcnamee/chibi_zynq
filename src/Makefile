@@ -230,7 +230,7 @@ UINCDIR =
 ULIBDIR =
 
 # List all user libraries here
-ULIBS =
+ULIBS = -lnosys
 
 #
 # End of user defines
