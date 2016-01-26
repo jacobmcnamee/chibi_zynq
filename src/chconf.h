@@ -500,6 +500,11 @@
 #define ARM_ENABLE_WFI_IDLE     TRUE
 #define ARM_WFI_IMPL            asm volatile ("wfi")
 
+/**
+ * @brief   FPU configuration
+ */
+#define ARM_FPU                 neon
+
 #endif  /* _CHCONF_H_ */
 
 /** @} */
