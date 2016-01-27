@@ -165,7 +165,8 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
+ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) \
+         reg_test.s
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \

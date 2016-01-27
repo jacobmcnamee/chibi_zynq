@@ -35,6 +35,9 @@ int _write(int file, char *ptr, int len)
   return 0;
 }
 
+static THD_WORKING_AREA(waRegTest, 2048);
+extern THD_FUNCTION(reg_test_thread, arg);
+
 /*
  * This is a periodic thread that does absolutely nothing except sleeping.
  */
@@ -70,6 +73,7 @@ int main(void) {
    * Creates the example thread.
    */
   (void) chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  (void) chThdCreateStatic(waRegTest, sizeof(waRegTest), NORMALPRIO, reg_test_thread, NULL);
 
   /*
    * Normal main() thread activity, in this demo it just sleeps.
