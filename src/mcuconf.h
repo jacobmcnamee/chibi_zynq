@@ -25,6 +25,8 @@
  * is enabled in halconf.h.
  */
 
+#define CPU_FREQUENCY_Hz            666666687U
+
 /*
  * ADC driver system settings.
  */
@@ -44,6 +46,7 @@
 /*
  * SERIAL driver system settings.
  */
+#define UART_REFCLK_FREQUENCY_Hz    50000000U
 
 /*
  * SPI driver system settings.

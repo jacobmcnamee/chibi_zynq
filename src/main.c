@@ -19,38 +19,65 @@
 
 #include <stdio.h>
 
-int _write(int file, char *ptr, int len) __attribute__((used));
+#include "zynq7000.h"
 
+const ioline_t led_gpio_line = PAL_LINE(GPIO1, 15);
+const ioline_t button_gpio_line = PAL_LINE(GPIO1, 19);
+
+const PALConfig pal_default_config;
+
+void button_ext_callback(EXTDriver *extp, expchannel_t channel)
+{
+  (void)extp;
+  (void)channel;
+  palToggleLine(led_gpio_line);
+}
+
+const EXTConfig ext_config =
+{
+  {
+    {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART,
+      button_ext_callback, GPIO1, 19}
+  }
+};
+
+int _write(int file, char *ptr, int len) __attribute__((used));
 int _write(int file, char *ptr, int len)
 {
   (void)file;
 
-  int i = 0;
-  while(i < len) {
-    /* Wait for UART1 FIFO not full */
-    while(*(volatile unsigned int *)(0xE0001000 + 0x002C) & 0x00000010U);
-    /* Write to UART1 TX FIFO */
-    *(volatile unsigned int *)(0xE0001000 + 0x0030) = ptr[i++];
-  }
-  return 0;
+  sdWrite(&SD2, (uint8_t *)ptr, len);
+  return len;
 }
 
-static THD_WORKING_AREA(waRegTest, 2048);
+static THD_WORKING_AREA(wa_reg_test_thread, 2048);
 extern THD_FUNCTION(reg_test_thread, arg);
 
-/*
- * This is a periodic thread that does absolutely nothing except sleeping.
- */
-static THD_WORKING_AREA(waThread1, 2048);
-static THD_FUNCTION(Thread1, arg) {
+static THD_WORKING_AREA(wa_rx_thread, 2048);
+static THD_FUNCTION(rx_thread, arg) {
 
   (void)arg;
 
-  chRegSetThreadName("sleeper");
+  chRegSetThreadName("RX");
 
   while (true) {
-    printf("Hello sleeper\r\n");
-    chThdSleepMilliseconds(1000);
+
+    uint32_t count = 0;
+    while(1) {
+      msg_t b = sdGetTimeout(&SD2, TIME_IMMEDIATE);
+      if (b >= Q_OK) {
+        //printf("rx: %u\r\n", b);
+        printf("%c", (char)(b & 0xff));
+        count++;
+      } else {
+        if (count > 0) {
+          printf("\r\n");
+        }
+        break;
+      }
+    }
+
+    chThdSleep(MS2ST(10));
   }
 }
 
@@ -59,6 +86,7 @@ static THD_FUNCTION(Thread1, arg) {
  */
 int main(void) {
 
+  setvbuf(stdout, NULL, _IONBF, 0);
   printf("Hello ChibiOS\r\n");
 
   /*
@@ -69,17 +97,26 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /*
-   * Creates the example thread.
-   */
-  (void) chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-  (void) chThdCreateStatic(waRegTest, sizeof(waRegTest), NORMALPRIO, reg_test_thread, NULL);
+  palSetLineMode(button_gpio_line, PAL_MODE_INPUT);
 
-  /*
-   * Normal main() thread activity, in this demo it just sleeps.
-   */
+  palSetLineMode(led_gpio_line, PAL_MODE_OUTPUT_PUSHPULL);
+  palWriteLine(led_gpio_line, PAL_HIGH);
+
+  extStart(&EXTD1, &ext_config);
+
+  sdStart(&SD2, 0);
+
+
+  (void) chThdCreateStatic(wa_rx_thread, sizeof(wa_rx_thread),
+                           HIGHPRIO, rx_thread, NULL);
+  (void) chThdCreateStatic(wa_reg_test_thread, sizeof(wa_reg_test_thread),
+                           NORMALPRIO, reg_test_thread, NULL);
+
+
+
   while (true) {
     printf("Hello main\r\n");
+
     chThdSleepMilliseconds(1000);
   }
 }

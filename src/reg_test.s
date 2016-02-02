@@ -35,9 +35,9 @@
 
     .data
 test_str:
-    .ascii "reg test\r\n"
+    .asciz "reg test\r\n"
 error_str:
-    .ascii "reg test ERROR\r\n"
+    .asciz "reg test ERROR\r\n"
 
 
     .text
