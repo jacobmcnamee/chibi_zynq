@@ -51,5 +51,6 @@
 /*
  * SPI driver system settings.
  */
+#define SPI_REFCLK_FREQUENCY_Hz     50000000U
 
 #endif /* _MCUCONF_H_ */
