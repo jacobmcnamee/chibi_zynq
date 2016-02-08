@@ -31,8 +31,18 @@
 
 const PALConfig pal_default_config;
 
+const WDGConfig wdg_config = {3000};
+
 const SPIConfig spi_config = {0, SPI_MODE_0,
                                SPI_CLK_DIV_4, SPI_SS_GPIO_LINE};
+
+void gpt_callback(GPTDriver *gptp)
+{
+  (void)gptp;
+  palToggleLine(LED_GPIO_LINE);
+}
+
+const GPTConfig gpt_config = {CPU_1x_FREQUENCY_Hz / (1<<16), gpt_callback};
 
 void button_ext_callback(EXTDriver *extp, expchannel_t channel)
 {
@@ -105,6 +115,8 @@ int main(void) {
   halInit();
   chSysInit();
 
+  wdgStart(&WDGD1, &wdg_config);
+
   palSetLineMode(BUTTON_GPIO_LINE, PAL_MODE_INPUT);
 
   palSetLineMode(LED_GPIO_LINE, PAL_MODE_OUTPUT_PUSHPULL);
@@ -127,6 +139,9 @@ int main(void) {
   palSetLineMode(SPI_SS_GPIO_LINE, PAL_MODE_OUTPUT_PUSHPULL);
 
   spiStart(&SPID2, &spi_config);
+
+  gptStart(&GPTD1, &gpt_config);
+  gptStartContinuous(&GPTD1, 1000);
 
 
   (void) chThdCreateStatic(wa_rx_thread, sizeof(wa_rx_thread),
@@ -162,6 +177,7 @@ int main(void) {
     spiUnselect(&SPID2);
     spiReleaseBus(&SPID2);
 
+    wdgReset(&WDGD1);
     chThdSleepMilliseconds(1000);
   }
 }

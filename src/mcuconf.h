@@ -25,7 +25,10 @@
  * is enabled in halconf.h.
  */
 
-#define CPU_FREQUENCY_Hz            666666687U
+#define CPU_6x4x_FREQUENCY_Hz       666600000U
+#define CPU_3x2x_FREQUENCY_Hz       333300000U
+#define CPU_2x_FREQUENCY_Hz         222200000U
+#define CPU_1x_FREQUENCY_Hz         111100000U
 
 /*
  * ADC driver system settings.
