@@ -42,7 +42,7 @@ void gpt_callback(GPTDriver *gptp)
   palToggleLine(LED_GPIO_LINE);
 }
 
-const GPTConfig gpt_config = {CPU_1x_FREQUENCY_Hz / (1<<16), gpt_callback};
+const GPTConfig gpt_config = {ZYNQ7000_CPU_1x_FREQUENCY_Hz / (1<<16), gpt_callback};
 
 void button_ext_callback(EXTDriver *extp, expchannel_t channel)
 {

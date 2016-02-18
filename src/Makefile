@@ -116,7 +116,7 @@ CHIBIOS = ../ChibiOS
 include $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/mk/startup_zynq7000.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/Zynq7000/platform.mk
+include $(CHIBIOS)/os/hal/ports/ZYNQ7000/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -125,7 +125,7 @@ include $(CHIBIOS)/os/rt/ports/ARM/compilers/GCC/mk/port_generic.mk
 #include $(CHIBIOS)/test/rt/test.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/Zynq7000.ld
+LDSCRIPT= $(STARTUPLD)/ZYNQ7000.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
