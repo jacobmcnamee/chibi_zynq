@@ -166,7 +166,7 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) \
-         reg_test.s cpu_init.s mmu_table.s
+         reg_test.s cpu_init.s mmu_table.s debug_vectors.s
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
