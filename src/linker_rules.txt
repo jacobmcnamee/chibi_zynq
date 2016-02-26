@@ -1,0 +1,6 @@
+    .mmu_tbl : ALIGN(16k)
+    {
+     PROVIDE(__mmu_tbl_start = .);
+     *(.mmu_tbl)
+     PROVIDE(__mmu_tbl_end = .);
+  } > flash
