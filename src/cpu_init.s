@@ -7,9 +7,18 @@
 
     .text
     .fpu    neon
+    .code   32
+    .balign 4
 
     .global __early_init
 __early_init:
+
+#if defined(THUMB_NO_INTERWORKING)
+    .code   16
+    mov r0, pc
+    bx  r0
+    .code   32
+#endif
 
     /* Invalidate caches and TLBs */
     mov r0, #0                      /* r0 = 0  */
@@ -92,7 +101,15 @@ invalidate_dcache_ret:
     msr cpsr_xsf, r0                /* write CPSR<31:8> */
 
     /* Done */
+#if defined(THUMB_NO_INTERWORKING)
+    add r0, pc, #1
+    bx r0
+    .code   16
     bx lr
+    .code   32
+#else
+    bx lr
+#endif
 
 /*
  *************************************************************************
