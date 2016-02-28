@@ -126,6 +126,9 @@ int main(void) {
 
   sdStart(&SD2, 0);
 
+  /* Unlock SLCR */
+  *(volatile uint32_t *)0xF8000008 = 0xDF0D;
+
   /* Enable SPI0 and SPI1 clocks */
   *(volatile uint32_t *)0xF800012C |= (1<<14) | (1 << 15);
 
