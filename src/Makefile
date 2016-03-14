@@ -138,7 +138,8 @@ CSRC = $(STARTUPSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
        main.c \
-       board.c
+       board.c \
+       mio.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

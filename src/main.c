@@ -20,6 +20,9 @@
 #include <stdio.h>
 
 #include "zynq7000.h"
+#include "mio.h"
+
+#define LINE_TO_MIO(line) ((32 * ((line) >> 8)) | ((line) & 0x1f))
 
 #define LED_GPIO_LINE PAL_LINE(GPIO1, 15)
 #define BUTTON_GPIO_LINE PAL_LINE(GPIO1, 19)
@@ -119,7 +122,7 @@ int main(void) {
 
   palSetLineMode(BUTTON_GPIO_LINE, PAL_MODE_INPUT);
 
-  palSetLineMode(LED_GPIO_LINE, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetLineMode(LED_GPIO_LINE, PAL_MODE_OUTPUT);
   palWriteLine(LED_GPIO_LINE, PAL_HIGH);
 
   extStart(&EXTD1, &ext_config);
@@ -136,10 +139,15 @@ int main(void) {
   *(volatile uint32_t *)0xF8000158 &= ~(0x3F << 8);
   *(volatile uint32_t *)0xF8000158 |= (20 << 8);
 
-  palSetLineMode(SPI_MOSI_GPIO_LINE, PAL_MODE_CUSTOM(PAL_DIR_PERICTRL, PAL_PULL_NONE, PAL_SPEED_SLOW, PAL_PIN_FUNCTION(5 << 4)));
-  palSetLineMode(SPI_MISO_GPIO_LINE, PAL_MODE_CUSTOM(PAL_DIR_INPUT, PAL_PULL_NONE, PAL_SPEED_SLOW, PAL_PIN_FUNCTION(5 << 4)));
-  palSetLineMode(SPI_CLK_GPIO_LINE, PAL_MODE_CUSTOM(PAL_DIR_PERICTRL, PAL_PULL_NONE, PAL_SPEED_SLOW, PAL_PIN_FUNCTION(5 << 4)));
-  palSetLineMode(SPI_SS_GPIO_LINE, PAL_MODE_OUTPUT_PUSHPULL);
+  mio_configure(LINE_TO_MIO(SPI_MOSI_GPIO_LINE), 5 << 4, false, false, false);
+  mio_configure(LINE_TO_MIO(SPI_MISO_GPIO_LINE), 5 << 4, true, false, false);
+  mio_configure(LINE_TO_MIO(SPI_CLK_GPIO_LINE), 5 << 4, false, false, false);
+  mio_configure(LINE_TO_MIO(SPI_SS_GPIO_LINE), 0, false, false, false);
+
+  palSetLineMode(SPI_MOSI_GPIO_LINE, PAL_MODE_OUTPUT);
+  palSetLineMode(SPI_MISO_GPIO_LINE, PAL_MODE_INPUT);
+  palSetLineMode(SPI_CLK_GPIO_LINE, PAL_MODE_OUTPUT);
+  palSetLineMode(SPI_SS_GPIO_LINE, PAL_MODE_OUTPUT);
 
   spiStart(&SPID2, &spi_config);
 
